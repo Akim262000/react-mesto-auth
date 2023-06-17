@@ -14,7 +14,7 @@ import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
-  const [loggeedIn, setLoggedIn] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
@@ -138,10 +138,12 @@ function App() {
       <div className="page">
         <Header />
         <Routes>
-          {/* <Route
-            path="/home"
+          <Route
+            path="/"
             element={
-              <Main
+              <ProtectedRoute 
+                component={Main}
+                isLoggedIn={isLoggedIn}
                 onEditProfile={handleEditProfileClick}
                 onAddPlace={handleAddPlaceClick}
                 onEditAvatar={handleEditAvatarClick}
@@ -151,26 +153,10 @@ function App() {
                 onCardDelete={handleCardDelete}
               />
             }
-          /> */}
-          <Route
-            path="/"
-            element={loggeedIn ? (
-              <ProtectedRoute
-                path="/"
-                component={Main}
-                loggeedIn={loggeedIn}
-                onEditProfile={handleEditProfileClick}
-                onAddPlace={handleAddPlaceClick}
-                onEditAvatar={handleEditAvatarClick}
-                onCardClick={handleCardClick}
-                cards={cards}
-                onCardLike={handleCardLike}
-                onCardDelete={handleCardDelete}
-              />) : (<Navigate to="/sign-in" />)
-            }
           />
           <Route path="/sign-in" element={<Login />} />
           <Route path="/sign-up" element={<Register />} />
+          <Route path="*" element={isLoggedIn ? (<Navigate to="/" />) : (<Navigate to="/sign-in" />) } />
         </Routes>
         <Footer />
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -12,9 +12,14 @@ import AddPlacePopup from "./AddPlacePopup";
 import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
+import InfoTooltip from "./InfoTooltip";
+import * as auth from "../utils/auth";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const navigate = useNavigate();
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
+  const [isSuccessRegistration, setIsSuccessRegistration] = React.useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
@@ -65,6 +70,10 @@ function App() {
   const handleCardClick = (card) => {
     setSelectedCard(card);
   };
+
+  const handleInfoTooltip = () => {
+    setIsInfoTooltipOpen(!isInfoTooltipOpen);
+  }
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
@@ -130,8 +139,53 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
+    setIsInfoTooltipOpen(false);
     setSelectedCard({});
   };
+
+  const handleRegistration = (data) => {
+    return auth
+    .register(data)
+    .then((data) => {
+      setIsSuccessRegistration(true);
+      handleInfoTooltip();
+      navigate('/sign-in');
+    })
+    .catch((err) => {
+      setIsSuccessRegistration(false);
+      handleInfoTooltip();
+    });
+  };
+
+  const handleAuthorization = (data) => {
+    return auth
+      .authorize(data)
+      .then((data) => {
+        setIsLoggedIn(true);
+        localStorage.setItem('jwt', data.token);
+        navigate('/');
+      })
+      .catch((err) => console.log(err));
+  };
+
+  // const checkToken = () => {
+  //   const jwt = localStorage.getItem("jwt");
+  //   auth.getContent(jwt).then((data) => {
+  //     if(!data) {
+  //       return;
+  //     }
+  //     setIsLoggedIn(true);
+  //     navigate("/");
+  //   })
+  //   .catch((e) => {
+  //     setIsLoggedIn(false);
+  //   });
+  // }
+
+  // React.useEffect(() => {
+  //   checkToken();
+  //   //eslint-disable-next-line
+  // }, [])
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
@@ -155,8 +209,8 @@ function App() {
             }
           />
 
-          <Route path="/sign-in" element={<Login handleLogin={() => setIsLoggedIn(true)} />} />
-          <Route path="/sign-up" element={<Register />} />
+          <Route path="/sign-in" element={<Login onLogin={handleAuthorization} handleLogin={() => setIsLoggedIn(true)} />} />
+          <Route path="/sign-up" element={<Register onRegister={handleRegistration} />} />
           <Route path="*" element={isLoggedIn ? <Navigate to="/" /> : <Navigate to="/sign-in" />} />
         </Routes>
         <Footer />
@@ -168,6 +222,8 @@ function App() {
         <AddPlacePopup isOpen={isAddPlacePopupOpen} onclose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
 
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+
+        <InfoTooltip isOpen={isInfoTooltipOpen} onClose={closeAllPopups} isSuccess={isSuccessRegistration} />
 
         <div className="popup popup_type_delete">
           <div className="popup__container">

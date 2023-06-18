@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import * as auth from "../utils/auth";
 
-const Login = ({handleLogin}) => {
+const Login = ({onLogin}) => {
   const [formValue, setFormValue] = useState({
-    email: '',
-    password: '',
+    // email: '',
+    // password: '',
   });
 
   const handleChange = (e) => {
@@ -16,14 +14,14 @@ const Login = ({handleLogin}) => {
     });
   };
 
-  const navigate = useNavigate();
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleLogin();
-    auth.authorize(formValue.email, formValue.password).then(() => {
-      navigate("/");
-    });
+    onLogin(formValue);
+    // localStorage.setItem("jwt", data.jwt);
+    // handleLogin();
+    // auth.authorize(formValue.email, formValue.password).then(() => {
+    //   navigate("/");
+    // });
   };
 
   return (

@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import * as auth from "../utils/auth";
+import { Link} from "react-router-dom";
 
 
-const Register = () => {
+const Register = ({onRegister}) => {
   const [formValue, setFormValue] = useState({
     email: '',
     password: '',
@@ -17,10 +16,9 @@ const Register = () => {
     });
   };
 
-  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
-    const {email, password} = formValue;
+    // const {email, password} = formValue;
     e.preventDefault();
     // const { email, password } = formValue;
     // auth.register(email, password).then((res) => {
@@ -28,9 +26,10 @@ const Register = () => {
     //     navigate('/sign-in');
     //   }
     // });
-    auth.register(email, password).then((data) => {
-      navigate('/sign-in');
-    })
+    // auth.register(email, password).then((data) => {
+    //   navigate('/sign-in');
+    // })
+    onRegister(formValue);
   };
 
   return (

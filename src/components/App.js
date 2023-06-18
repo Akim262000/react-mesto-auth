@@ -190,7 +190,7 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header />
+        <Header isLoggedIn={isLoggedIn}/>
         <Routes>
           <Route
             element={

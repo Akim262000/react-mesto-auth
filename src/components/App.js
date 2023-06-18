@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -139,10 +139,10 @@ function App() {
         <Header />
         <Routes>
           <Route
-            path="/"
             element={
-              <ProtectedRoute 
-                component={Main}
+              <ProtectedRoute
+                path="/"
+                element={Main}
                 isLoggedIn={isLoggedIn}
                 onEditProfile={handleEditProfileClick}
                 onAddPlace={handleAddPlaceClick}
@@ -154,9 +154,10 @@ function App() {
               />
             }
           />
-          <Route path="/sign-in" element={<Login />} />
+
+          <Route path="/sign-in" element={<Login handleLogin={() => setIsLoggedIn(true)} />} />
           <Route path="/sign-up" element={<Register />} />
-          <Route path="*" element={isLoggedIn ? (<Navigate to="/" />) : (<Navigate to="/sign-in" />) } />
+          <Route path="*" element={isLoggedIn ? <Navigate to="/" /> : <Navigate to="/sign-in" />} />
         </Routes>
         <Footer />
 

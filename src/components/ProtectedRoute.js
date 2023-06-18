@@ -1,6 +1,6 @@
 import { Route, Navigate } from "react-router-dom";
 
-const ProtectedRoute =({components: Component, ...props}) => {
+const ProtectedRoute =({component: Component, ...props}) => {
   return (
     <Route>
       {() => {

@@ -2,7 +2,7 @@ import React from "react";
 import logoHeader from "../images/logo.svg";
 import { Link, useLocation } from "react-router-dom";
 
-const Header = ({ isLoggedIn }) => {
+function Header ({ isLoggedIn, userEmail, onSignOut }) {
   const location = useLocation();
 
   return (
@@ -21,10 +21,10 @@ const Header = ({ isLoggedIn }) => {
         )}
         {isLoggedIn && (
           <nav className="header__navigation">
-            <span>email</span>  
-            <Link to="/sign-in" className="header__link">
+            <span>{userEmail}</span>  
+            <div className="header__link" onClick={() => onSignOut()}>
               Выйти
-            </Link>
+            </div>
           </nav>
         )}
       </header>

@@ -6,3 +6,8 @@
   line-height: 22px;
   font-family: 'Inter', sans-serif;
 }
+
+.header__navigation span {
+  margin-right: 24px;
+  color: #fff;
+}

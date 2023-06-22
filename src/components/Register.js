@@ -37,8 +37,8 @@ const Register = ({onRegister}) => {
       <div className="auth">
       <h2 className="auth__title">Регистрация</h2>
       <form className="auth__form" onSubmit={handleSubmit}>
-        <input type="email" id="email" name="email" placeholder="Email" value={formValue.email || ''} onChange={handleChange} />
-        <input type="password" id="password" name="password" placeholder="Пароль" minLength="8" value={formValue.password || ''} onChange={handleChange} />
+        <input type="email" id="email" name="email" autoComplete="email" placeholder="Email" value={formValue.email || ''} onChange={handleChange} />
+        <input type="password" id="password" name="password" autoComplete="password" placeholder="Пароль" minLength="8" value={formValue.password || ''} onChange={handleChange} />
         <button type="submit">Зарегистрироваться</button>
       </form>
     </div>

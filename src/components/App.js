@@ -17,7 +17,11 @@ import * as auth from "../utils/auth";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  // const [userData, setUserData] = React.useState({});
+  const [authorizationEmail, setAuthorizationEmail] = React.useState('');
+
   const navigate = useNavigate();
+
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = React.useState(false);
   const [isSuccessRegistration, setIsSuccessRegistration] = React.useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
@@ -67,13 +71,13 @@ function App() {
     setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
   };
 
+    const handleInfoTooltip = () => {
+    setIsInfoTooltipOpen(!isInfoTooltipOpen);
+  }
+
   const handleCardClick = (card) => {
     setSelectedCard(card);
   };
-
-  const handleInfoTooltip = () => {
-    setIsInfoTooltipOpen(!isInfoTooltipOpen);
-  }
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
@@ -143,6 +147,13 @@ function App() {
     setSelectedCard({});
   };
 
+   // Выход 
+   const handleSignOut = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem('jwt');
+    navigate('/sign-in');
+  };
+
   const handleRegistration = (data) => {
     return auth
     .register(data)
@@ -152,6 +163,7 @@ function App() {
       navigate('/sign-in');
     })
     .catch((err) => {
+      console.log(err);
       setIsSuccessRegistration(false);
       handleInfoTooltip();
     });
@@ -163,40 +175,53 @@ function App() {
       .then((data) => {
         setIsLoggedIn(true);
         localStorage.setItem('jwt', data.token);
+        tokenCheck();
         navigate('/');
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        handleInfoTooltip();
+      });
   };
 
-  // const checkToken = () => {
-  //   const jwt = localStorage.getItem("jwt");
-  //   auth.getContent(jwt).then((data) => {
-  //     if(!data) {
-  //       return;
-  //     }
-  //     setIsLoggedIn(true);
-  //     navigate("/");
-  //   })
-  //   .catch((e) => {
-  //     setIsLoggedIn(false);
-  //   });
-  // }
+  const tokenCheck = () => {
+    const jwt = localStorage.getItem('jwt');
+    if (!jwt) {
+      return;
+    }
+    auth
+      .getContent(jwt)
+      .then((data) => {
+        setAuthorizationEmail(data.data.email);
+        setIsLoggedIn(true);
+        navigate('/');
+      })
+      .catch((err) => {
+        console.log(err);
+        // setIsLoggedIn(false);
+      });
+  };
 
-  // React.useEffect(() => {
-  //   checkToken();
-  //   //eslint-disable-next-line
-  // }, [])
+  React.useEffect(() => {
+    tokenCheck();
+  }, []);
+
+  React.useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/');
+    }
+  }, [isLoggedIn]);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header isLoggedIn={isLoggedIn}/>
+        <Header isLoggedIn={isLoggedIn} userEmail={authorizationEmail} onSignOut={handleSignOut}/>
         <Routes>
-          <Route
-            element={
+          <Route path="/"
+            element = {
               <ProtectedRoute
-                path="/"
-                element={Main}
+                // path="/"
+                component={Main}
                 isLoggedIn={isLoggedIn}
                 onEditProfile={handleEditProfileClick}
                 onAddPlace={handleAddPlaceClick}
@@ -205,15 +230,15 @@ function App() {
                 cards={cards}
                 onCardLike={handleCardLike}
                 onCardDelete={handleCardDelete}
+                />
+            }                
               />
-            }
-          />
 
-          <Route path="/sign-in" element={<Login onLogin={handleAuthorization} handleLogin={() => setIsLoggedIn(true)} />} />
+          <Route path="/sign-in" element={<Login onLogin={handleAuthorization}/>} />
           <Route path="/sign-up" element={<Register onRegister={handleRegistration} />} />
-          <Route path="*" element={isLoggedIn ? <Navigate to="/" /> : <Navigate to="/sign-in" />} />
+          {/* <Route path="*" element={isLoggedIn ? <Navigate to="/" /> : <Navigate to="/sign-in" />} /> */}
         </Routes>
-        <Footer />
+        {isLoggedIn && <Footer />}
 
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
 

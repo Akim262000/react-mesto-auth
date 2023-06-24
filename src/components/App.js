@@ -57,7 +57,7 @@ function App() {
       .catch((err) => {
         console.log(`Ошибка ${err}`);
       });
-  }, []);
+  }, [isLoggedIn]);
 
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(!isEditProfilePopupOpen);
@@ -175,7 +175,7 @@ function App() {
       .then((data) => {
         setIsLoggedIn(true);
         localStorage.setItem('jwt', data.token);
-        tokenCheck();
+        checkToken();
         navigate('/');
       })
       .catch((err) => {
@@ -184,7 +184,7 @@ function App() {
       });
   };
 
-  const tokenCheck = () => {
+  const checkToken = () => {
     const jwt = localStorage.getItem('jwt');
     if (!jwt) {
       return;
@@ -203,7 +203,7 @@ function App() {
   };
 
   React.useEffect(() => {
-    tokenCheck();
+    checkToken();
   }, []);
 
   React.useEffect(() => {
@@ -236,7 +236,7 @@ function App() {
 
           <Route path="/sign-in" element={<Login onLogin={handleAuthorization}/>} />
           <Route path="/sign-up" element={<Register onRegister={handleRegistration} />} />
-          {/* <Route path="*" element={isLoggedIn ? <Navigate to="/" /> : <Navigate to="/sign-in" />} /> */}
+          <Route path="*" element={isLoggedIn ? <Navigate to="/" /> : <Navigate to="/sign-in" />} />
         </Routes>
         {isLoggedIn && <Footer />}
 

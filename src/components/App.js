@@ -36,9 +36,12 @@ function App() {
     cohort: "",
   });
   const [cards, setCards] = React.useState([]);
+  
 
   React.useEffect(() => {
-    api
+
+    if (isLoggedIn) {
+      api
       .getInitialCards()
       .then((data) => {
         setCards(data);
@@ -46,9 +49,12 @@ function App() {
       .catch((err) => {
         console.log(`Ошибка ${err}`);
       });
-  }, []);
+    }
+   
+  }, [isLoggedIn]);
 
   React.useEffect(() => {
+    if (isLoggedIn) {
     api
       .getUserInfo()
       .then((data) => {
@@ -57,6 +63,7 @@ function App() {
       .catch((err) => {
         console.log(`Ошибка ${err}`);
       });
+    }
   }, [isLoggedIn]);
 
   const handleEditProfileClick = () => {
